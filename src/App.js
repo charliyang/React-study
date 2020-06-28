@@ -1,24 +1,22 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import ReactRouterPage from './pages/ReactRouterPage';
+// import ReactReduxPage from './pages/ReactReduxPage';
+// import HomePage from './pages/HomePage';
+// import ReduxPage from './pages/ReduxPage';
+// import ClassComponent from './pages/ClassComponent';
+// import FunctionComponent from './pages/FunctionComponent';
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="App"> 
+      {/* <ClassComponent /> */}
+      {/* <FunctionComponent/> */}
+      {/* <HomePage/> */}
+      {/* <ReduxPage/> */}
+      {/* <ReactReduxPage/> */}
+      <ReactRouterPage/>
     </div>
   );
 }
