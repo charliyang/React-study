@@ -1,4 +1,9 @@
-export default function createStore(reducer) {
+export default function createStore(reducer, enhancer) {
+    //加强store
+  if (enhancer) {
+      return enhancer(createStore)(reducer)
+  }
+
   let currentState;
   let currentListeners = [];
   /**
