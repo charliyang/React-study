@@ -1,6 +1,6 @@
 // 1. 引入store
-import { createStore } from "redux";
-
+// import { createStore } from "redux";
+import { createStore } from "../CRedux/";
 //2. 创建store
 const store = createStore(counterFun);
 
