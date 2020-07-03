@@ -1,12 +1,17 @@
 import React from 'react';
 import './App.css';
-import ReduxPage from './pages/ReduxPage';
+import ReactReduxHooksPage from './pages/ReactReduxHooksPage';
+// import HooksPage from './pages/HooksPage';
+// import ReactReduxPage from './pages/ReactReduxPage';
+
 
 
 function App() {
   return (
     <div className="App"> 
-      <ReduxPage/>
+      {/* <HooksPage /> */}
+      {/* <ReactReduxPage/> */}
+      <ReactReduxHooksPage/>
     </div>
   );
 }

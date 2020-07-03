@@ -1,6 +1,7 @@
 {
   "name": "my-app",
   "version": "0.1.0",
+  "author": "charlie",
   "private": true,
   "dependencies": {
     "@babel/plugin-proposal-decorators": "^7.10.3",
