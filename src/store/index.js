@@ -1,11 +1,10 @@
 // 1. 引入store
-// import { createStore, applyMiddleware } from "redux";
-// import thunk from "redux-thunk";
-// import logger from "redux-logger";
-// import promise from "redux-promise";
-import { createStore, CapplyMiddleware, Cthunk, Clogger, Cpromise } from "../CRedux/";
+import { createStore, applyMiddleware } from "redux";
+import thunk from "redux-thunk";
+import logger from "redux-logger";
+import promise from "redux-promise";
 //2. 创建store
-const store = createStore(counterFun, CapplyMiddleware(Cthunk, Clogger, Cpromise));
+const store = createStore(counterFun, applyMiddleware(thunk, logger, promise));
 
 //更改store状态的方法
 function counterFun(state = 0, action) {
