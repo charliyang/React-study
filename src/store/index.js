@@ -1,22 +1,17 @@
 // 1. 引入store
-import { createStore, applyMiddleware } from "redux";
-import thunk from "redux-thunk";
-import logger from "redux-logger";
-import promise from "redux-promise";
+import { createStore, applyMiddleware, combineReducers } from "redux";
+// import thunk from "redux-thunk";
+// import logger from "redux-logger";
+// import promise from "redux-promise";
+import { loginReducer, logoutReducer } from './LoginReducer'
+import createSagaMiddleware from 'redux-saga'
+// import loginSaga from '../action/loginSaga'
+import rootSaga from '../action/rootSaga'
+
+const sagaMiddlerware = createSagaMiddleware()
 //2. 创建store
-const store = createStore(counterFun, applyMiddleware(thunk, logger, promise));
+const store = createStore(combineReducers({user: loginReducer, out: logoutReducer}), applyMiddleware(sagaMiddlerware));
 
-//更改store状态的方法
-function counterFun(state = 0, action) {
-  switch (action.type) {
-    case "ADD":
-      return state + 1;
-    case "MINUS":
-      return state - action.payload || 1;
-    default:
-      return state;
-  }
-}
-
+sagaMiddlerware.run(rootSaga)
 //4. 导出store
 export default store;
