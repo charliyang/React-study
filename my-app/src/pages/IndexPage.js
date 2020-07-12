@@ -1,13 +1,11 @@
 import React, { Component } from 'react'
 
-class componentName extends Component {
-    render () {
+export default class IndexPage extends Component {
+    render() {
         return (
             <div>
-                
+                <p>IndexPage</p>
             </div>
         )
     }
 }
-
-export default componentName
