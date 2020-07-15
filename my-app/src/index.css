@@ -14,7 +14,8 @@ code {
 
 .border {
   margin: 100 auto;
-  border: 1px solid plum
+  border: 1px solid plum;
+  padding: 15px;
 }
 
 .red {
