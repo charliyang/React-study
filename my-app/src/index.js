@@ -1,7 +1,7 @@
-// import {Component} from 'react';
+// import React, {Component, useState} from 'react';
 // import ReactDOM from 'react-dom';
 import React from './creact/';
-import ReactDOM from './creact/react-dom'
+import ReactDOM, {useState} from './creact/react-dom'
 import Component from './creact/Component'
 import './index.css';
 
@@ -23,8 +23,13 @@ class ClassComponent extends Component {
 
 //函数组件
 function FunctionComponent(props) {
+
+  const [count, setCount] = useState(1)
+
   return <div className="border">FunctionCommponent-{props.name}
-    <button onClick={() => {console.log("omg")}}>click</button>
+    <p>{count}</p>
+    <button onClick={() => setCount(count + 1)}>click</button>
+    {count % 2 ? <button>click</button> : <span>charlie</span>}
   </div>
 }
 
