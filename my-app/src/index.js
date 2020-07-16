@@ -8,7 +8,7 @@ import './index.css';
 //class组件
 class ClassComponent extends Component {
   static defaultProps = {
-    color: 'red'
+    color: 'pink'
   }
   render() {
     return (
@@ -33,7 +33,7 @@ const jsx = (
     <p>张三</p>
     <a href="https://baidu.com">baisud</a>
     <FunctionComponent name="lisi" />
-    <ClassComponent name="lalall"/>
+    <ClassComponent name="lalall" />
   </div>
 )
 

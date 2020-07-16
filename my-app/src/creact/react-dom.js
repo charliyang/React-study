@@ -40,16 +40,20 @@ function createNode(vnode) {
   return node;
 }
 
+/**
+ * 跟新一个Function组件
+ * @param {node} fiber 
+ */
 function updateFunctionComponent(fiber) {
-  // const {type, props} = vnode;
-  // const vvnode = type(props);
-  // const node = createNode(vvnode);
-  // return node;
   const { type, props } = fiber
   const children = [type(props)]
   reconcileChildren(fiber, children)
 }
 
+/**
+ * 更新一个类组件
+ * @param {node} fiber 
+ */
 function updateClassComponent(fiber) {
   const { type, props } = fiber
   const component = new type(props)
@@ -81,6 +85,11 @@ function reconcileChildren(workInProgressFiber, children) {
   }
 }
 
+/**
+ * 更新node节点
+ * @param {node} node 
+ * @param {Array} nextVal 
+ */
 function updateNode(node, nextVal) {
   Object.keys(nextVal)
     .filter(k => k !== "children")
