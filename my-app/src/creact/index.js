@@ -8,20 +8,25 @@ function createElement(type, config, ...children) {
   const props = {
     ...config,
     children: children.map(child =>
-      typeof child === "object" ? asignProps(child) : createTextNode(child)
+      typeof child === "object" ? child : createTextNode(child)
     )
-  };
-  return {type, props};
-}
-
-function asignProps(child) {
-  const { type, props } = child
-  if (typeof type !== 'undefined' && type.defaultProps) {
-    const { defaultProps } = type
-    Object.assign(defaultProps, props)
-    child.props = defaultProps
   }
-  return child
+  delete props.key;
+
+  if (type && type.defaultProps) {
+    const defaultProps = type.defaultProps;
+    for (let propName in defaultProps) {
+      if (props[propName] === undefined) {
+        props[propName] = defaultProps[propName];
+      }
+    }
+  }
+
+  return {
+    key: config.key || "",
+    type,
+    props
+  }
 }
 
 function createTextNode(text) {

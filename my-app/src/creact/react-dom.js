@@ -76,9 +76,10 @@ function updateClassComponent(fiber) {
 }
 
 // 遍历子节点
-function reconcileChildren(workInProgressFiber, children) {
+function reconcileChildren_old(workInProgressFiber, children) {
   let prevSibling = null
   let oldFiber = workInProgressFiber.base && workInProgressFiber.base.child
+  console.log('oldFiber', oldFiber)
   for (let i = 0; i < children.length; i++) {
     let child = children[i]
     let newFiber = null
@@ -125,6 +126,187 @@ function reconcileChildren(workInProgressFiber, children) {
     }
     prevSibling = newFiber
   }
+}
+
+function placeChild(newFiber, lastPlacedIndex, newIndex, shouldTrackSideEffects) {
+  newFiber.index = newIndex;
+  if (!shouldTrackSideEffects) {
+    // 初次渲染 不用考虑移动位置
+    return lastPlacedIndex;
+  }
+
+  let base = newFiber.base;
+  if (base !== null) {
+    let oldIndex = base.index;
+    if (oldIndex < lastPlacedIndex) {
+      // This is a move.
+      return lastPlacedIndex;
+    } else {
+      // This item can stay in place.
+      return oldIndex;
+    }
+  } else {
+    // This is an insertion.
+    newFiber.effectTag = PLACEMENT;
+    return lastPlacedIndex;
+  }
+}
+
+function reconcileChildren(returnFiber, newChildren) {
+  //记录上一次的fiber
+  let prevNewFiber = null
+  let oldFiber = returnFiber.base && returnFiber.base.child
+  //记录上次插入位置
+  let lastPlacedIndex = 0
+  //遍历children的下标
+  let newIndex = 0
+  //记录oldFiber
+  let nextOldFiber = null
+  let shouldTrackSideEffects = true
+  if (!oldFiber) {
+    //oldFiber为null时证明是初次渲染
+    shouldTrackSideEffects = false
+  }
+
+  //初次渲染
+  if ((oldFiber === undefined)) {
+    for (; newIndex < newChildren.length; newIndex++) {
+      let newChild = newChildren[newIndex]
+      const newFiber = {
+        key: newChild.key,
+        type: newChild.type,
+        props: newChild.props,
+        node: null,
+        base: null,
+        return: returnFiber,
+        effectTag: PLACEMENT
+      }
+      lastPlacedIndex = placeChild(newFiber, lastPlacedIndex, newIndex, shouldTrackSideEffects)
+      
+      if (prevNewFiber === null) {
+        //头结点
+        returnFiber.child = newFiber
+      } else {
+        prevNewFiber.sibling = newFiber
+      }
+      prevNewFiber = newFiber
+    }
+    return
+  }
+
+  //更新
+  for (; oldFiber !== null && newIndex < newChildren.length; newIndex++) {
+    console.log('oldFiber', oldFiber)
+    if (oldFiber.index > newIndex) {
+      nextOldFiber = oldFiber
+      oldFiber = null
+    } else {
+      nextOldFiber = oldFiber.sibling
+    }
+    let newChild = newChildren[newIndex]
+    if (!(newChild.type === oldFiber.type && newChild.key === oldFiber.key)) {
+      if (oldFiber === null) {
+        oldFiber = nextOldFiber
+      }
+      break
+    }
+    const newFiber = {
+      key: newChild.key,
+      type: newChild.type,
+      props: newChild.props,
+      node: oldFiber.node,
+      base: oldFiber,
+      return: returnFiber,
+      effectTag: UPDATE
+    }
+    if (shouldTrackSideEffects) {
+      if (oldFiber && newFiber.base === null) {
+        deletions.push({
+          ...oldFiber,
+          effectTag: DELETION
+        })
+      }
+    }
+    lastPlacedIndex = placeChild(
+      newFiber,
+      lastPlacedIndex,
+      newIndex,
+      shouldTrackSideEffects
+    );
+    if (prevNewFiber === null) {
+      returnFiber.child = newFiber;
+    } else {
+      prevNewFiber.sibling = newFiber;
+    }
+    prevNewFiber = newFiber;
+    oldFiber = nextOldFiber
+  }
+
+  const existingChildren = mapRemainingChildren(returnFiber, oldFiber);
+  for (; newIndex < newChildren.length; newIndex++) {
+    let newChild = newChildren[newIndex];
+    let newFiber = {
+      key: newChild.key,
+      type: newChild.type,
+      props: newChild.props,
+      return: returnFiber
+    };
+    const matchedFiber = existingChildren.get(
+      newChild.key === null ? newIndex : newChild.key
+    );
+    if (matchedFiber) {
+      newFiber = {
+        ...newFiber,
+        node: matchedFiber.node,
+        base: matchedFiber,
+        effectTag: UPDATE
+      };
+      shouldTrackSideEffects &&
+        existingChildren.delete(newChild.key === null ? newIndex : newChild.key);
+    } else {
+      newFiber = {
+        ...newFiber,
+        node: null,
+        base: null,
+        effectTag: PLACEMENT
+      };
+    }
+    lastPlacedIndex = placeChild(
+      newFiber,
+      lastPlacedIndex,
+      newIndex,
+      shouldTrackSideEffects
+    );
+    if (prevNewFiber === null) {
+      returnFiber.child = newFiber;
+    } else {
+      prevNewFiber.sibling = newFiber;
+    }
+    prevNewFiber = newFiber;
+  }
+
+  if (shouldTrackSideEffects) {
+    existingChildren.forEach(child =>
+      deletions.push({
+        ...child,
+        effectTag: DELETION
+      })
+    );
+  }
+}
+
+function mapRemainingChildren(returnFiber, currentFirstChild) {
+  const existingChildren = new Map();
+  let existingChild = currentFirstChild;
+  while (existingChild) {
+    if (existingChild.key !== null) {
+      existingChildren.set(existingChild.key, existingChild);
+    } else {
+      existingChildren.set(existingChild.index, existingChild);
+    }
+    existingChild = existingChild.sibling;
+  }
+  return existingChildren;
 }
 
 /**
